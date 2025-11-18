@@ -1,5 +1,5 @@
 <?php
-// Incluir arquivos de configuração
+// Incluir arquivas de configuração
 require_once '../config/conexao.php';
 require_once '../config/funcoes.php';
 
@@ -7,6 +7,18 @@ require_once '../config/funcoes.php';
 if ($conexao->connect_error) {
     die("Erro de conexão com o banco de dados.");
 }
+
+// API Cotação do Dólar
+$url_dolar = "https://economia.awesomeapi.com.br/last/USD-BRL";
+$json_dolar = file_get_contents($url_dolar);
+$dados_dolar = json_decode($json_dolar, true);
+$cotacao_dolar = isset($dados_dolar['USDBRL']['bid']) ? "R$ " . $dados_dolar['USDBRL']['bid'] : "Indisponível";
+
+// API Clima - Porto Alegre/RS (Exemplo)
+$url_clima = "https://api.open-meteo.com/v1/forecast?latitude=-30.03&longitude=-51.23&current=temperature_2m";
+$json_clima = file_get_contents($url_clima);
+$dados_clima = json_decode($json_clima, true);
+$temperatura = isset($dados_clima['current']['temperature_2m']) ? $dados_clima['current']['temperature_2m'] . "°C" : "Indisponível";
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -20,6 +32,9 @@ if ($conexao->connect_error) {
     <header class="header">
         <nav class="navbar">
             <a href="index.php" class="logo">Cultura<span>&</span>Arte</a>
+            
+
+            
             <ul class="nav-links">
                 <li><a href="index.php">Início</a></li>
                 <li><a href="#categorias">Categorias</a></li>
@@ -39,6 +54,11 @@ if ($conexao->connect_error) {
         <section class="hero">
             <h1>Portal Cultura & Arte</h1>
             <p>Descubra as mais vibrantes expressões culturais e artísticas do momento</p>
+            
+            <!-- Informações adicionais no hero -->
+            <div class="hero-info">
+                <small>🌡️ Temperatura atual: <?php echo $temperatura; ?> | 💵 Cotação do dólar: <?php echo $cotacao_dolar; ?></small>
+            </div>
         </section>
 
         <?php 
@@ -117,6 +137,10 @@ if ($conexao->connect_error) {
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NOME; ?>. Todos os direitos reservados.</p>
         <p>Desenvolvido com ❤️ para amantes da cultura e arte</p>
+        <!-- Informações no footer também -->
+        <div class="footer-info">
+            <small>Dados atualizados: Clima <?php echo $temperatura; ?> | Dólar <?php echo $cotacao_dolar; ?></small>
+        </div>
     </footer>
 </body>
 </html>

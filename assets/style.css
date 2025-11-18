@@ -396,3 +396,125 @@ body {
         word-break: break-word;
     }
 }
+/* Info Bar no Header */
+.info-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.info-icon {
+    font-size: 1rem;
+}
+
+.info-text {
+    font-weight: 500;
+}
+
+/* Mini Cards no Hero */
+.hero-info-cards {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.mini-card {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    color: var(--dark);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mini-card-icon {
+    font-size: 1.5rem;
+}
+
+.mini-card-content {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.mini-card-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.mini-card-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+/* Section Header com Status */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.status-info {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Footer Status */
+.footer-status {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .info-bar {
+        display: none;
+    }
+    
+    .hero-info-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .mini-card {
+        width: 200px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .status-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
