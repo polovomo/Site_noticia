@@ -49,7 +49,6 @@ $usuario = usuarioAtual();
             </div>
 
             <div style="display: flex; gap: 1rem; justify-content: center;">
-                <a href="editar_usuario.php" class="btn btn-secondary">Editar Meus Dados</a>
                 <a href="index.php" class="btn">Voltar às Notícias</a>
             </div>
         </div>
