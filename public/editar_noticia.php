@@ -77,13 +77,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
         $nova_imagem = uploadImagem($_FILES['imagem']);
         if ($nova_imagem) {
-            // Se fez upload de nova imagem, usar ela
+            // Se fez upload de nova imagem, excluir a antiga
+            if ($noticia['imagem'] && file_exists('../' . $noticia['imagem'])) {
+                unlink('../' . $noticia['imagem']);
+            }
             $imagem_path = $nova_imagem;
         }
     }
     
     // Se marcar para remover imagem
     if (isset($_POST['remover_imagem']) && $_POST['remover_imagem'] == '1') {
+        // Excluir imagem física se existir
+        if ($noticia['imagem'] && file_exists('../' . $noticia['imagem'])) {
+            unlink('../' . $noticia['imagem']);
+        }
         $imagem_path = NULL;
     }
     
@@ -125,6 +132,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Notícia - <?php echo SITE_NOME; ?></title>
     <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .imagem-preview {
+            max-width: 300px;
+            margin: 10px 0;
+            display: none;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .imagem-preview.visible {
+            display: block;
+        }
+        .imagem-preview img {
+            max-width: 100%;
+            height: auto;
+        }
+        .imagem-atual {
+            max-width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -191,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Imagem atual:</label>
                     <?php if (!empty($noticia['imagem']) && file_exists('../' . $noticia['imagem'])): ?>
                         <div style="margin: 10px 0;">
-                            <img src="../<?php echo $noticia['imagem']; ?>" alt="Imagem atual" style="max-width: 200px; border: 1px solid #ddd; border-radius: 5px;">
+                            <img src="../<?php echo $noticia['imagem']; ?>" alt="Imagem atual" class="imagem-atual">
                             <br>
                             <label style="display: inline-flex; align-items: center; margin-top: 5px;">
                                 <input type="checkbox" name="remover_imagem" value="1"> 
@@ -206,6 +236,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="file" id="imagem" name="imagem" class="form-control" 
                            accept="image/jpeg,image/png,image/gif,image/webp">
                     <small>Formatos: JPG, PNG, GIF, WebP (máx. 5MB)</small>
+                    
+                    <!-- Preview da nova imagem -->
+                    <div id="imagem-preview" class="imagem-preview">
+                        <p><strong>Preview da nova imagem:</strong></p>
+                        <img src="" alt="Preview da imagem">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -224,6 +260,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
     </main>
+
+    <script>
+        // Preview da nova imagem antes do upload
+        document.getElementById('imagem').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagem-preview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.querySelector('img').src = e.target.result;
+                    preview.classList.add('visible');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.remove('visible');
+            }
+        });
+    </script>
 </body>
 </html>
 <?php

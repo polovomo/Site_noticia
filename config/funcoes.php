@@ -67,10 +67,10 @@ function redirect($url, $mensagem = null) {
 }
 
 /**
- * Faz upload de imagem - VERSÃO CORRIGIDA ✅
+ * Faz upload de imagem - VERSÃO FINAL CORRIGIDA ✅
  */
 function uploadImagem($arquivo) {
-    // ✅ CAMINHO CORRETO para sua estrutura de pastas
+    // ✅ CAMINHO ABSOLUTO correto para sua estrutura
     $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/site/public/uploads/imagens/';
     
     // Verificar se há algum erro no upload
@@ -101,12 +101,12 @@ function uploadImagem($arquivo) {
 
     // Gerar nome único
     $extensao = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
-    $nomeArquivo = uniqid() . '_' . date('Ymd') . '.' . $extensao;
+    $nomeArquivo = uniqid() . '_' . date('Ymd_His') . '.' . strtolower($extensao);
     $caminhoCompleto = $uploadDir . $nomeArquivo;
 
     // Criar diretório se não existir
     if (!is_dir($uploadDir)) {
-        if (!mkdir($uploadDir, 0777, true)) {
+        if (!mkdir($uploadDir, 0755, true)) {
             error_log("Falha ao criar diretório: " . $uploadDir);
             return null;
         }
@@ -115,8 +115,8 @@ function uploadImagem($arquivo) {
     // Tentar mover o arquivo
     if (move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)) {
         error_log("Upload bem-sucedido: " . $caminhoCompleto);
-        // ✅ CORREÇÃO: Retornar caminho RELATIVO para salvar no banco
-        return 'uploads/imagens/' . $nomeArquivo;
+        // ✅ Retornar caminho RELATIVO para salvar no banco
+        return 'public/uploads/imagens/' . $nomeArquivo;
     } else {
         error_log("Falha ao mover arquivo: " . $arquivo['tmp_name'] . " para " . $caminhoCompleto);
         return null;
@@ -163,4 +163,24 @@ function obterMensagemErroUpload($erro_code) {
             return "Erro desconhecido no upload.";
     }
 }
-?>  
+
+/**
+ * Exibe imagem com fallback para imagem padrão
+ */
+function exibirImagem($caminho_imagem, $alt = '', $classe = '', $fallback = '/site/assets/imagem-padrao.jpg') {
+    if (!empty($caminho_imagem) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/site/' . $caminho_imagem)) {
+        return '<img src="/site/' . $caminho_imagem . '" alt="' . htmlspecialchars($alt) . '" class="' . $classe . '">';
+    } else {
+        return '<img src="' . $fallback . '" alt="Imagem não disponível" class="' . $classe . '">';
+    }
+}
+
+/**
+ * Limpa nome de arquivo para evitar problemas
+ */
+function limparNomeArquivo($nome) {
+    $nome = preg_replace('/[^a-zA-Z0-9\.\-\_]/', '_', $nome);
+    $nome = substr($nome, 0, 100); // Limitar tamanho
+    return $nome;
+}
+?>

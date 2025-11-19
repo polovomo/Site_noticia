@@ -51,7 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Verificar permissão para excluir
         if (isAdmin() || $noticia['autor'] == $usuario['id']) {
-            // Excluir a notícia
+            
+            // ✅✅✅ CORREÇÃO: Excluir a imagem física se existir
+            if (!empty($noticia['imagem']) && file_exists('../' . $noticia['imagem'])) {
+                if (unlink('../' . $noticia['imagem'])) {
+                    error_log("Imagem excluída: " . $noticia['imagem']);
+                } else {
+                    error_log("Erro ao excluir imagem: " . $noticia['imagem']);
+                }
+            }
+            
+            // Excluir a notícia do banco
             $sql = "DELETE FROM noticias WHERE id = ?";
             $stmt = $conexao->prepare($sql);
             $stmt->bind_param("i", $noticia_id);
@@ -100,6 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>⚠️ Confirmação de Exclusão</h3>
                 <p>Você está prestes a excluir a notícia:</p>
                 <p><strong>"<?php echo htmlspecialchars($noticia['titulo']); ?>"</strong></p>
+                
+                <?php if (!empty($noticia['imagem'])): ?>
+                <p><strong>📷 Imagem:</strong> A imagem associada também será excluída permanentemente.</p>
+                <?php endif; ?>
                 
                 <?php if (isAdmin() && $noticia['autor'] != $usuario['id']): ?>
                 <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin: 10px 0;">

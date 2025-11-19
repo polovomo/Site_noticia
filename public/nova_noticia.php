@@ -82,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!-- O resto do HTML permanece igual -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -90,6 +89,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nova Notícia - <?php echo SITE_NOME; ?></title>
     <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .imagem-preview {
+            max-width: 300px;
+            margin: 10px 0;
+            display: none;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .imagem-preview.visible {
+            display: block;
+        }
+        .imagem-preview img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -150,6 +166,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="file" id="imagem" name="imagem" class="form-control" 
                            accept="image/jpeg,image/png,image/gif,image/webp">
                     <small>Formatos: JPG, PNG, GIF, WebP (máx. 5MB)</small>
+                    
+                    <!-- Preview da imagem -->
+                    <div id="imagem-preview" class="imagem-preview">
+                        <p><strong>Preview:</strong></p>
+                        <img src="" alt="Preview da imagem">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -167,6 +189,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
     </main>
+
+    <script>
+        // Preview da imagem antes do upload
+        document.getElementById('imagem').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagem-preview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.querySelector('img').src = e.target.result;
+                    preview.classList.add('visible');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.remove('visible');
+            }
+        });
+    </script>
 </body>
 </html>
 <?php
